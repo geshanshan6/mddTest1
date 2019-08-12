@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" scanPeriod="60 seconds" debug="false">
+    <property name="log_history_retain_days" value="100" /><!--定义 个按天分割的  志保 天数-->
+    <property name="log_history_retain_hours" value="240" /><!--定义 个按 时分 割的 志保  时数-->
+    <property name="log_dir" value="/your/log/path/" /><!--存放 志的 径--> <property name="logLevel" value="debug" /><!-- 志的默认级别-->
+    <property name="log_pattern" value="%d{MM-dd HH:mm:ss} [%thread] %-5level
+[%logger.%M %line] - %msg%n%ex" /><!-- 志的格式-->
+    <appender name="all"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>${log_dir}/all.log</file>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/all.log.%d{yyyy-MM-dd}
+            </fileNamePattern>
+            <maxHistory>${log_history_retain_days}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="warn"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+
+            <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender"> <!-- encoder 默认配置为PatternLayoutEncoder -->
+                <encoder>
+                    <pattern>${log_pattern}</pattern>
+                </encoder>
+                <appender name="debug"
+                          class="ch.qos.logback.core.rolling.RollingFileAppender">
+                    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                        <level>DEBUG</level>
+                        <onMatch>ACCEPT</onMatch>
+                        <onMismatch>DENY</onMismatch>
+                    </filter>
+                    <file>${log_dir}/debug.log</file>
+                    <rollingPolicy
+                            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>${log_dir}/debug.log.%d{yyyy-MM-dd-HH}
+                        </fileNamePattern>
+                        <maxHistory>${log_history_retain_hours}</maxHistory>
+                    </rollingPolicy>
+                    <encoder>
+                        <pattern>${log_pattern}</pattern>
+                    </encoder>
+                </appender>
+                <appender name="info"
+                          class="ch.qos.logback.core.rolling.RollingFileAppender">
+                    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                        <level>INFO</level>
+                        <onMatch>ACCEPT</onMatch>
+                        <onMismatch>DENY</onMismatch>
+                    </filter>
+                    <file>${log_dir}/info.log</file>
+                    <rollingPolicy
+                            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>${log_dir}/info.log.%d{yyyy-MM-dd}
+                        </fileNamePattern>
+                        <maxHistory>${log_history_retain_days}</maxHistory>
+                    </rollingPolicy>
+                    <encoder>
+                        <pattern>${log_pattern}</pattern>
+                    </encoder>
+                </appender>
+                <appender name="warn"
+                          class="ch.qos.logback.core.rolling.RollingFileAppender">
+                    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                        <level>WARN</level>
+                        <onMatch>ACCEPT</onMatch>
+                        <onMismatch>DENY</onMismatch>
+                    </filter>
+                    <file>${log_dir}/warn.log</file>
+                    <rollingPolicy
+                            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>${log_dir}/warn.log.%d{yyyy-MM-dd}
+                        </fileNamePattern>
+                                <maxHistory>${log_history_retain_days}</maxHistory>
+                            </rollingPolicy>
+                            <encoder>
+                                <pattern>${log_pattern}</pattern>
+                                <!--  <immediateFlush>false</immediateFlush> -->
+                    </encoder>
+                </appender>
+                <appender name="error"
+                          class="ch.qos.logback.core.rolling.RollingFileAppender">
+                    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                        <level>ERROR</level>
+                        <onMatch>ACCEPT</onMatch>
+                        <onMismatch>DENY</onMismatch>
+                    </filter>
+                    <file>${log_dir}/error.log</file>
+                    <rollingPolicy
+                            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <fileNamePattern>${log_dir}/error.log.%d{yyyy-MM-dd}
+                        </fileNamePattern>
+                        <maxHistory>${log_history_retain_days}</maxHistory>
+                    </rollingPolicy>
+                    <encoder>
+                        <pattern>${log_pattern}</pattern>
+                    </encoder>
+                </appender>
+                <!-- name根据实际情况填写 程最顶层包的名称，以 所有类均可被该 志配置覆盖到，level定 义 最低应该
+                输出的 志级别， 如设置level=info，那么info级别以下(debug)的 志将 会打印--> <logger name="demo.log" level="${logLevel}" additivity="false">
+                <appender-ref ref="debug" />
+                <appender-ref ref="info" />
+                <appender-ref ref="warn" />
+                <appender-ref ref="error" />
+        </logger>
+         <root level="${logLevel}">
+            <appender-ref ref="all" />
+        </root>
+</configuration>
